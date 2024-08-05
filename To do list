@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TASKS 100
+#define TASK_LENGTH 100
+
+typedef struct {
+    char task[TASK_LENGTH];
+} Task;
+
+Task tasks[MAX_TASKS];
+int task_count = 0;
+
+void add_task() {
+    if (task_count < MAX_TASKS) {
+        printf("Enter the task: ");
+        getchar();  // Consume newline left by previous input
+        fgets(tasks[task_count].task, TASK_LENGTH, stdin);
+        tasks[task_count].task[strcspn(tasks[task_count].task, "\n")] = 0;  // Remove newline character
+        task_count++;
+        printf("Task added successfully.\n");
+    } else {
+        printf("Task list is full.\n");
+    }
+}
+
+void remove_task() {
+    int task_index;
+    printf("Enter the task number to remove: ");
+    scanf("%d", &task_index);
+    
+    if (task_index > 0 && task_index <= task_count) {
+        for (int i = task_index - 1; i < task_count - 1; i++) {
+            strcpy(tasks[i].task, tasks[i + 1].task);
+        }
+        task_count--;
+        printf("Task removed successfully.\n");
+    } else {
+        printf("Invalid task number.\n");
+    }
+}
+
+void update_task() {
+    int task_index;
+    printf("Enter the task number to update: ");
+    scanf("%d", &task_index);
+    
+    if (task_index > 0 && task_index <= task_count) {
+        printf("Enter the new task: ");
+        getchar();  // Consume newline left by previous input
+        fgets(tasks[task_index - 1].task, TASK_LENGTH, stdin);
+        tasks[task_index - 1].task[strcspn(tasks[task_index - 1].task, "\n")] = 0;  // Remove newline character
+        printf("Task updated successfully.\n");
+    } else {
+        printf("Invalid task number.\n");
+    }
+}
+
+void show_tasks() {
+    if (task_count == 0) {
+        printf("No tasks in the to-do list.\n");
+    } else {
+        printf("To-do list:\n");
+        for (int i = 0; i < task_count; i++) {
+            printf("%d. %s\n", i + 1, tasks[i].task);
+        }
+    }
+}
+
+int main() {
+    int choice;
+    while (1) {
+        printf("\nOptions:\n");
+        printf("1. Add task\n");
+        printf("2. Remove task\n");
+        printf("3. Update task\n");
+        printf("4. Show tasks\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                add_task();
+                break;
+            case 2:
+                remove_task();
+                break;
+            case 3:
+                update_task();
+                break;
+            case 4:
+                show_tasks();
+                break;
+            case 5:
+                printf("Exiting the to-do list application.\n");
+                exit(0);
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+    
+    return 0;
+}
