@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <string.h>
+
+// Define the Question structure
+struct Question {
+    char question[256];
+    char options[4][100];
+    char correctAnswer;
+};
+
+// Define the Quiz structure
+struct Quiz {
+    char title[100];
+    struct Question questions[10];
+    int numQuestions;
+};
+
+// Function to create a question
+struct Question createQuestion(char *q, char *opt1, char *opt2, char *opt3, char *opt4, char correct) {
+    struct Question newQuestion;
+    strcpy(newQuestion.question, q);
+    strcpy(newQuestion.options[0], opt1);
+    strcpy(newQuestion.options[1], opt2);
+    strcpy(newQuestion.options[2], opt3);
+    strcpy(newQuestion.options[3], opt4);
+    newQuestion.correctAnswer = correct;
+    return newQuestion;
+}
+
+// Function to display a question
+void displayQuestion(struct Question q) {
+    printf("%s\n", q.question);
+    printf("A. %s\n", q.options[0]);
+    printf("B. %s\n", q.options[1]);
+    printf("C. %s\n", q.options[2]);
+    printf("D. %s\n", q.options[3]);
+}
+
+// Function to get the user's answer
+char getAnswer() {
+    char answer;
+    printf("Your answer (A/B/C/D): ");
+    scanf(" %c", &answer);
+    return answer;
+}
+
+// Function to check if the answer is correct
+int checkAnswer(struct Question q, char answer) {
+    return answer == q.correctAnswer;
+}
+
+// Function to display a quiz
+void displayQuiz(struct Quiz quiz) {
+    int score = 0;
+    for (int i = 0; i < quiz.numQuestions; i++) {
+        displayQuestion(quiz.questions[i]);
+        char answer = getAnswer();
+        if (checkAnswer(quiz.questions[i], answer)) {
+            printf("Correct!\n");
+            score++;
+        } else {
+            printf("Wrong! The correct answer was %c\n", quiz.questions[i].correctAnswer);
+        }
+        printf("\n");
+    }
+    printf("You scored %d out of %d.\n", score, quiz.numQuestions);
+}
+
+// Function to display the home screen
+void displayHomeScreen() {
+    printf("Welcome to the Quiz Application\n");
+    printf("1. Start a new quiz\n");
+    printf("2. Exit\n");
+    printf("Choose an option: ");
+}
+
+// Function to list available quizzes
+void listAvailableQuizzes(struct Quiz quizzes[], int numQuizzes) {
+    printf("Available Quizzes:\n");
+    for (int i = 0; i < numQuizzes; i++) {
+        printf("%d. %s\n", i + 1, quizzes[i].title);
+    }
+}
+
+// Function to start a quiz
+void startQuiz(struct Quiz quizzes[], int numQuizzes) {
+    int choice;
+    listAvailableQuizzes(quizzes, numQuizzes);
+    printf("Choose a quiz to start: ");
+    scanf("%d", &choice);
+    if (choice > 0 && choice <= numQuizzes) {
+        displayQuiz(quizzes[choice - 1]);
+    } else {
+        printf("Invalid choice.\n");
+    }
+}
+
+int main() {
+    struct Quiz quizzes[2];
+
+    quizzes[0].numQuestions = 3;
+    strcpy(quizzes[0].title, "General Knowledge Quiz");
+    quizzes[0].questions[0] = createQuestion("What is the capital of France?",
+                                             "Berlin", "Madrid", "Paris", "Lisbon", 'C');
+    quizzes[0].questions[1] = createQuestion("Which planet is known as the Red Planet?",
+                                             "Earth", "Mars", "Jupiter", "Saturn", 'B');
+    quizzes[0].questions[2] = createQuestion("Who wrote 'To Kill a Mockingbird'?",
+                                             "Harper Lee", "Jane Austen", "Mark Twain", "J.K. Rowling", 'A');
+
+    quizzes[1].numQuestions = 2;
+    strcpy(quizzes[1].title, "Science Quiz");
+    quizzes[1].questions[0] = createQuestion("What is the chemical symbol for water?",
+                                             "H2O", "O2", "CO2", "H2", 'A');
+    quizzes[1].questions[1] = createQuestion("What is the speed of light?",
+                                             "300,000 km/s", "150,000 km/s", "100,000 km/s", "200,000 km/s", 'A');
+
+    int option;
+    while (1) {
+        displayHomeScreen();
+        scanf("%d", &option);
+        if (option == 1) {
+            startQuiz(quizzes, 2);
+        } else if (option == 2) {
+            printf("Exiting the application.\n");
+            break;
+        } else {
+            printf("Invalid option. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
